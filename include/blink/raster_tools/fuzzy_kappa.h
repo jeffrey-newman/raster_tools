@@ -133,14 +133,14 @@ namespace blink {
     template<class RasterA, class RasterB, class RasterMask, class RasterOut,
     class DistanceDecay, class RasterMaker>
       bool fuzzy_kappa_2009(
-      RasterA& mapA,       // input: first map
-      RasterB& mapB,      // input: second map
-      RasterMask& mask,   // input: mask map
+      RasterA& mapA,              // input: first map
+      RasterB& mapB,              // input: second map
+      RasterMask& mask,           // input: mask map
       int nCatsA, int nCatsB,     // dimension: number of categories in legends
       const matrix<double>& m,    // parameter: categorical similarity matrix
-      DistanceDecay f,           // parameter: distance decay function
+      DistanceDecay f,            // parameter: distance decay function
       RasterOut& comparison,      // result: similarity map
-      RasterMaker maker,         // RasterMaker::raster<T> r = maker.create<T>(model)
+      RasterMaker maker,          // RasterMaker::raster<T> r = maker.create<T>(model)
       double& fuzzykappa)         // result: improved fuzzy kappa
     {
         // for use with std::get
