@@ -1,0 +1,24 @@
+file format : IDRISI Raster A.1
+file title  : 
+data type   : integer
+file type   : binary
+columns     : 10
+rows        : 10
+ref. system : plane
+ref. units  : m
+unit dist.  : 1
+min. X      : 0
+max. X      : 10
+min. Y      : 0
+max. Y      : 10
+pos'n error : unknown
+resolution  : 1
+min. value  : 0
+max. value  : 1
+display min : 0
+display max : 1
+value units : unspecified
+value error : unknown
+flag value  : -9999
+flag def'n  : NODATA
+legend cats : 0
