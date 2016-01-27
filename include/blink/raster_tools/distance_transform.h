@@ -71,7 +71,9 @@
 
       int sep(int i, int u, std::vector<int>& g, int, const detail::euclidean&)
       {
-        return (u*u - i*i + g[u] * g[u] - g[i] * g[i]) / (2 * (u - i));
+        return ( (u-i) * (u+i) + (g[u] - g[i]) * (g[u] + g[i] ) ) / (2 * (u - i));
+
+        //return (u*u - i*i + g[u] * g[u] - g[i] * g[i]) / (2 * (u - i));
       }
 
       int sep(int i, int u, std::vector<int>& g, int inf, const manhattan&)
@@ -166,8 +168,8 @@
       const int rows = blink::raster::raster_operations::size1(in);
       const int cols = blink::raster::raster_operations::size2(in);
 
-      const out_type inf = rows * rows + cols * cols;
-
+      const out_type inf = rows + cols;
+      
       auto a = in.begin();
       auto v = out.begin();
 
@@ -182,12 +184,12 @@
       for (int r = 1; r < rows; ++r) {
         for (int c = 0; c < cols; ++c, ++a, ++u, ++v) { // subsequent rows
           out_type up = *u;
-          (*v) = (static_cast<in_type>(*a) == target) ? 0 : up + 1;
+          (*v) = (static_cast<in_type>(*a) == target) ? 0 : up == inf ? inf : up + 1;
         }
       }
 
       u = out.begin() + ((rows - 1) * cols - 1);
-      v = out.begin() + ((rows) * cols - 1);
+      v = out.begin() + (rows * cols - 1);
 
       for (int r = rows - 2; r >= 0; --r) {
         std::vector<int> g;
