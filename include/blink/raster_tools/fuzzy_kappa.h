@@ -184,10 +184,10 @@ namespace blink {
           similarityA.emplace_back(std::move(temp));
         }
 
-        auto multi_similarity_a = blink::iterator::make_range_range(similarityA);
-        auto multi_similarity_b = blink::iterator::make_range_range(similarityB);
-        auto multi_distance_a = blink::iterator::make_range_range(distancesA);
-        auto multi_distance_b = blink::iterator::make_range_range(distancesB);
+        auto multi_similarity_a = blink::iterator::make_range_zip_range(similarityA);
+        auto multi_similarity_b = blink::iterator::make_range_zip_range(similarityB);
+        auto multi_distance_a = blink::iterator::make_range_zip_range(distancesA);
+        auto multi_distance_b = blink::iterator::make_range_zip_range(distancesB);
         static const int a_index = 0;
         static const int b_index = 1;
         static const int mask_index = 2;
