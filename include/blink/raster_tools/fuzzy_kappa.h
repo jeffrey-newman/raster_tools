@@ -155,17 +155,21 @@ namespace blink {
         std::vector<temp_raster> distancesB;
         for (int catA = 0; catA < nCatsA; ++catA) {
           temp_raster temp = maker.create<double>(mapA);
-          blink::raster_tools::euclidean_distance_transform(mapA, temp, catA);
+          bool has_catA = blink::raster_tools::euclidean_distance_transform(mapA, temp, catA);
           //Apply distance decay function on the distances
-          for (auto&& i : temp) i = f(i);
+          for (auto&& i : temp){
+            i = has_catA ? f(i) : 0;// similarity for infinite distance is 0
+          }
           distancesA.emplace_back(std::move(temp));
         }
 
         for (int catB = 0; catB < nCatsB; catB++) {
           temp_raster temp = maker.create<double>(mapB);
-          blink::raster_tools::euclidean_distance_transform(mapB, temp, catB);
+          bool has_catB = blink::raster_tools::euclidean_distance_transform(mapB, temp, catB);
           //Apply distance decay function on the distances
-          for (auto&& i : temp) i = f(i);
+          for (auto&& i : temp) {
+            i = has_catB ? f(i) : 0;// similarity for infinite distance is 0
+          }
           distancesB.emplace_back(std::move(temp));
         }
 
