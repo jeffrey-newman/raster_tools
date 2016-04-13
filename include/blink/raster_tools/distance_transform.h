@@ -101,7 +101,7 @@
       void process_line(std::vector<T>& g, ResultIter& iter, int inf, 
         const MethodTag&)
       {
-        const int m = g.size();
+        const int m = static_cast<int>(g.size());
         std::vector<st_pair> st(1, st_pair(0, 0));
         for (int u = 1; u < m; ++u) {
           while (!st.empty() &&
@@ -129,44 +129,50 @@
         }
       }
     }
-    
+
+    // Return false if target is not present in raster, true otherwise
     template<class InRaster, class OutRaster>
-    void euclidean_distance_transform(const InRaster& in, OutRaster& out, 
+    bool euclidean_distance_transform(const InRaster& in, OutRaster& out, 
       const blink::raster::raster_traits::value_type<InRaster>& target)
     {
-      distance_transform(in, out, target, euclidean_non_squared{});
+      return distance_transform(in, out, target, euclidean_non_squared{});
     }
     
+    // Return false if target is not present in raster, true otherwise
     template<class InRaster, class OutRaster>
-    void squared_euclidean_distance_transform(const InRaster& in, OutRaster& out
+    bool squared_euclidean_distance_transform(const InRaster& in, OutRaster& out
       , const blink::raster::raster_traits::value_type<InRaster>& target)
     {
-      distance_transform(in, out, target, euclidean_squared{});
+      return distance_transform(in, out, target, euclidean_squared{});
     }
 
+    // Return false if target is not present in raster, true otherwise
     template<class InRaster, class OutRaster>
-    void manhattan_distance_transform(const InRaster& in, OutRaster& out, 
+    bool manhattan_distance_transform(const InRaster& in, OutRaster& out, 
       const blink::raster::raster_traits::value_type<InRaster>& target)
     {
-      distance_transform(in, out, target, manhattan{});
+      return distance_transform(in, out, target, manhattan{});
     }
 
+    // Return false if target is not present in raster, true otherwise
     template<class InRaster, class OutRaster>
-    void chessboard_distance_transform(const InRaster& in, OutRaster& out,
+    bool chessboard_distance_transform(const InRaster& in, OutRaster& out,
       const blink::raster::raster_traits::value_type<InRaster>& target)
     {
-      distance_transform(in, out, target, chessboard{});
+      return distance_transform(in, out, target, chessboard{});
     }
 
+    // Return false if target is not present in raster, true otherwise
     template<class InRaster, class OutRaster, class Method>
-    void distance_transform(const InRaster& in, OutRaster& out,
+    bool distance_transform(const InRaster& in, OutRaster& out,
       const blink::raster::raster_traits::value_type<InRaster>& target,
       const Method&)
     {
+      bool has_target = false;
       using in_type = blink::raster::raster_traits::value_type<InRaster>;
       using out_type = blink::raster::raster_traits::value_type<OutRaster>;
-      const int rows = blink::raster::raster_operations::size1(in);
-      const int cols = blink::raster::raster_operations::size2(in);
+      const int rows = static_cast<int>(blink::raster::raster_operations::size1(in));
+      const int cols = static_cast<int>(blink::raster::raster_operations::size2(in));
 
       const out_type inf = rows + cols;
       
@@ -177,14 +183,30 @@
       // parallel implementation
       
       for (int c = 0; c < cols; ++c, ++a, ++v) { // first row
-        (*v) = (static_cast<in_type>(*a) == target) ? 0 : inf;
+        if (static_cast<in_type>(*a) == target)
+        {
+          (*v) = 0;
+          has_target = true;
+        }
+        else
+        {
+          (*v) = inf;
+        }
       }
 
       auto u = out.begin();
       for (int r = 1; r < rows; ++r) {
         for (int c = 0; c < cols; ++c, ++a, ++u, ++v) { // subsequent rows
           out_type up = *u;
-          (*v) = (static_cast<in_type>(*a) == target) ? 0 : up == inf ? inf : up + 1;
+          if (static_cast<in_type>(*a) == target)
+          {
+            (*v) = 0;
+            has_target = true;
+          }
+          else
+          {
+            (*v) = up == inf ? inf : up + 1;
+          }
         }
       }
 
@@ -199,16 +221,17 @@
           if (up > vp) {
             (*u) = vp + 1;
           }
-          g.push_back(round(vp)); // will have values conveniently in reverse
+          g.push_back(detail::round(vp)); // will have values conveniently in reverse
         }
-        detail::process_line(g, out.begin() + (r + 1) * cols, inf, Method{});
+        detail::process_line(g, out.begin() + (r + 1) * cols, static_cast<int>(inf), Method{});
       }
       std::vector<int> g; //last line
       for (int c = 0; c < cols; ++c, --v) { // going back
         out_type vp = (*v);
-        g.push_back(round(vp)); // will have values conveniently in reverse
+        g.push_back(detail::round(vp)); // will have values conveniently in reverse
       }
-      detail::process_line(g, out.begin(), inf, Method{});
+      detail::process_line(g, out.begin(), static_cast<int>(inf), Method{});
+      return has_target;
     }
   }
 }
